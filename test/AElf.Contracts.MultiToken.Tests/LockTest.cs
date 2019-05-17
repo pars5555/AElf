@@ -14,43 +14,39 @@ using Xunit;
 
 namespace AElf.Contracts.MultiToken
 {
-    // TODO: Refactor these test cases.
     public class LockTest : MultiTokenContractTestBase
     {
-        /*private ContractTester<MultiTokenContractTestAElfModule> Starter { get; set; }
-
-        private ECKeyPair StarterKeyPair { get; set; }
+        private ContractTester<MultiTokenContractTestAElfModule> Starter { get; set; }
 
         private Address ConsensusContractAddress => Starter.GetConsensusContractAddress();
 
         public LockTest()
         {
-            StarterKeyPair = CryptoHelpers.GenerateKeyPair();
-            Starter = new ContractTester<MultiTokenContractTestAElfModule>(500, StarterKeyPair);
+            Starter = new ContractTester<MultiTokenContractTestAElfModule>();
             var tokenContractCallList = new SystemContractDeploymentInput.Types.SystemTransactionMethodCallList();
-            tokenContractCallList.Add(nameof(TokenContract.Create), new CreateInput
+            tokenContractCallList.Add(nameof(TokenContract.CreateNativeToken), new CreateNativeTokenInput
             {
-                Symbol = "TELF",
+                Symbol = "ELF",
                 Decimals = 2,
                 IsBurnable = true,
                 TokenName = "elf token",
                 Issuer = Starter.GetCallOwnerAddress(),
                 TotalSupply = ElectionContractConstants.LockTokenForElection * 100,
-                LockWhiteList = {Address.FromPublicKey(StarterKeyPair.PublicKey), ConsensusContractAddress}
+                LockWhiteSystemContractNameList = {ConsensusSmartContractAddressNameProvider.Name}
             });
 
-            tokenContractCallList.Add(nameof(TokenContract.Issue), new IssueInput
+            tokenContractCallList.Add(nameof(TokenContract.IssueNativeToken), new IssueNativeTokenInput
             {
-                Symbol = "TELF",
+                Symbol = "ELF",
                 Amount = ElectionContractConstants.LockTokenForElection * 20,
-                To = Address.FromPublicKey(StarterKeyPair.PublicKey),
+                ToSystemContractName = ElectionSmartContractAddressNameProvider.Name,
                 Memo = "Issue ",
             });
 
             // For testing.
             tokenContractCallList.Add(nameof(TokenContract.Issue), new IssueInput
             {
-                Symbol = "TELF",
+                Symbol = "ELF",
                 Amount = ElectionContractConstants.LockTokenForElection * 80,
                 To = Starter.GetCallOwnerAddress(),
                 Memo = "Set dividends.",
@@ -89,13 +85,13 @@ namespace AElf.Contracts.MultiToken
             var lockId = Hash.Generate();
 
             // Lock.
-            await Starter.ExecuteContractWithMiningAsync(tester.GetTokenContractAddress(), nameof(TokenContract.Lock),
+            await tester.ExecuteContractWithMiningAsync(tester.GetTokenContractAddress(), nameof(TokenContract.Lock),
                 new LockInput
                 {
                     From = user,
                     To = ConsensusContractAddress,
                     Amount = amount,
-                    Symbol = "TELF",
+                    Symbol = "ELF",
                     LockId = lockId,
                     Usage = "Testing."
                 });
@@ -107,13 +103,13 @@ namespace AElf.Contracts.MultiToken
             }
 
             // Unlock.
-            await Starter.ExecuteContractWithMiningAsync(tester.GetTokenContractAddress(), nameof(TokenContract.Unlock),
+            await tester.ExecuteContractWithMiningAsync(tester.GetTokenContractAddress(), nameof(TokenContract.Unlock),
                 new UnlockInput
                 {
                     From = user,
                     To = ConsensusContractAddress,
                     Amount = amount,
-                    Symbol = "TELF",
+                    Symbol = "ELF",
                     LockId = lockId,
                     Usage = "Testing."
                 });
@@ -123,27 +119,6 @@ namespace AElf.Contracts.MultiToken
                 var balance = await tester.GetBalanceAsync(user);
                 balance.ShouldBe(amount);
             }
-        }
-
-        [Fact]
-        public async Task Locker_Not_In_White_List()
-        {
-            const long amount = 100;
-
-            var user = GenerateUser();
-
-            var tester = Starter.CreateNewContractTester(user);
-
-            await Starter.TransferTokenAsync(user, amount);
-
-            // Try to lock.
-            var lockId = Hash.Generate();
-
-            // Lock.
-            var transactionResult = await tester.Lock(amount, lockId, Address.Generate());
-
-            transactionResult.Status.ShouldBe(TransactionResultStatus.Failed);
-            transactionResult.Error.ShouldContain("Not in white list");
         }
 
         [Fact]
@@ -320,6 +295,6 @@ namespace AElf.Contracts.MultiToken
             {
                 return user.PublicKey;
             }
-        }*/
+        }
     }
 }

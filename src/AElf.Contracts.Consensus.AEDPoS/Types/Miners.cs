@@ -2,19 +2,24 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.CompilerServices;
-using Google.Protobuf;
 using Google.Protobuf.WellKnownTypes;
 
 namespace AElf.Contracts.Consensus.AEDPoS
 {
-    internal partial class MinerList
+    public partial class Miners
     {
         public Round GenerateFirstRoundOfNewTerm(int miningInterval,
             DateTime currentBlockTime, long currentRoundNumber = 0, long currentTermNumber = 0)
         {
+            var dict = new Dictionary<string, int>();
+
+            foreach (var miner in PublicKeys)
+            {
+                dict.Add(miner.ToHex(), miner[0]);
+            }
+
             var sortedMiners =
-                (from obj in PublicKeys.Distinct()
-                        .ToDictionary<ByteString, string, int>(miner => miner.ToHex(), miner => miner[0])
+                (from obj in dict
                     orderby obj.Value descending
                     select obj.Key).ToList();
 

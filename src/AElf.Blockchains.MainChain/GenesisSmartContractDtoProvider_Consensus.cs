@@ -5,7 +5,6 @@ using AElf.Kernel;
 using AElf.Kernel.Consensus.AEDPoS;
 using AElf.Kernel.Token;
 using AElf.OS.Node.Application;
-using AElf.Sdk.CSharp;
 using Google.Protobuf;
 
 namespace AElf.Blockchains.MainChain
@@ -30,14 +29,16 @@ namespace AElf.Blockchains.MainChain
                     ElectionContractSystemName = ElectionSmartContractAddressNameProvider.Name,
                     VoteContractSystemName = VoteSmartContractAddressNameProvider.Name,
                     TokenContractSystemName = TokenSmartContractAddressNameProvider.Name,
-                    TimeEachTerm = _consensusOptions.TimeEachTerm
+                    TimeEachTerm = _consensusOptions.TimeEachTerm,
+                    BaseTimeUnit = 2 // TODO: Remove this after testing.
                 });
             aelfConsensusMethodCallList.Add(nameof(AEDPoSContract.FirstRound),
-                new MinerList
+                new Miners
                 {
                     PublicKeys =
                     {
-                        _consensusOptions.InitialMiners.Select(p => p.ToByteString())
+                        _consensusOptions.InitialMiners.Select(p =>
+                            ByteString.CopyFrom(ByteArrayHelpers.FromHexString(p)))
                     }
                 }.GenerateFirstRoundOfNewTerm(_consensusOptions.MiningInterval,
                     _consensusOptions.StartTimestamp.ToUniversalTime()));

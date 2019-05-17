@@ -25,7 +25,6 @@ using AElf.Kernel.Token;
 using AElf.Kernel.TransactionPool.Infrastructure;
 using AElf.OS.Node.Application;
 using AElf.OS.Node.Domain;
-using AElf.Sdk.CSharp;
 using Google.Protobuf;
 using Google.Protobuf.WellKnownTypes;
 using Microsoft.Extensions.DependencyInjection;
@@ -239,11 +238,12 @@ namespace AElf.Contracts.TestBase
                     IsTermStayOne = true
                 });
             consensusMethodCallList.Add(nameof(AEDPoSContract.FirstRound),
-                new MinerList
+                new Miners
                 {
                     PublicKeys =
                     {
-                        consensusOptions.InitialMiners.Select(k => k.ToByteString())
+                        consensusOptions.InitialMiners.Select(k =>
+                            ByteString.CopyFrom(ByteArrayHelpers.FromHexString(k)))
                     }
                 }.GenerateFirstRoundOfNewTerm(consensusOptions.MiningInterval,
                     consensusOptions.StartTimestamp.ToUniversalTime()));
@@ -251,7 +251,7 @@ namespace AElf.Contracts.TestBase
         }
 
         private SystemContractDeploymentInput.Types.SystemTransactionMethodCallList GenerateConsensusInitializationCallList(List<string> initialMiners,
-            int miningInterval, Timestamp startTimestamp, int timeEachTerm = 604800)
+            int miningInterval, Timestamp startTimestamp, int timeEachTerm = 7)
         {
             var consensusMethodCallList = new SystemContractDeploymentInput.Types.SystemTransactionMethodCallList();
             consensusMethodCallList.Add(nameof(AEDPoSContract.InitialAElfConsensusContract),
@@ -260,11 +260,12 @@ namespace AElf.Contracts.TestBase
                     IsTermStayOne = true
                 });
             consensusMethodCallList.Add(nameof(AEDPoSContract.FirstRound),
-                new MinerList
+                new Miners
                 {
                     PublicKeys =
                     {
-                        initialMiners.Select(k => k.ToByteString())
+                        initialMiners.Select(k =>
+                            ByteString.CopyFrom(ByteArrayHelpers.FromHexString(k)))
                     }
                 }.GenerateFirstRoundOfNewTerm(miningInterval,
                     startTimestamp.ToDateTime()));

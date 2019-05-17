@@ -119,7 +119,7 @@ namespace AElf.Contracts.Profit
                 ProfitId = input.SubProfitId,
                 Weight = input.SubItemWeight
             });
-            profitItem.TotalWeight = profitItem.TotalWeight.Add(input.SubItemWeight);
+            profitItem.TotalWeight += input.SubItemWeight;
             State.ProfitItemsMap[input.ProfitId] = profitItem;
 
             return new Empty();
@@ -149,7 +149,7 @@ namespace AElf.Contracts.Profit
 
             Assert(input.EndPeriod >= profitItem.CurrentPeriod, "Invalid end period.");
 
-            profitItem.TotalWeight = profitItem.TotalWeight.Add(input.Weight);
+            profitItem.TotalWeight += input.Weight;
 
             State.ProfitItemsMap[profitId] = profitItem;
 
@@ -180,7 +180,7 @@ namespace AElf.Contracts.Profit
             {
                 currentProfitDetails.Details.Remove(detail);
             }
-
+            
             State.ProfitDetailsMap[profitId][input.Receiver] = currentProfitDetails;
             
             Context.LogDebug(() => $"Add {input.Weight} weights to profit item {input.ProfitId.ToHex()}");
@@ -352,7 +352,7 @@ namespace AElf.Contracts.Profit
             else
             {
                 releasedProfitInformation.TotalWeight = totalWeight;
-                releasedProfitInformation.ProfitsAmount = releasedProfitInformation.ProfitsAmount.Add(input.Amount);
+                releasedProfitInformation.ProfitsAmount += input.Amount;
                 releasedProfitInformation.IsReleased = true;
             }
 
@@ -385,7 +385,7 @@ namespace AElf.Contracts.Profit
                 remainAmount -= amount;
 
                 var subItem = State.ProfitItemsMap[subProfitItem.ProfitId];
-                subItem.TotalAmount = subItem.TotalAmount.Add(amount);
+                subItem.TotalAmount += amount;
                 State.ProfitItemsMap[subProfitItem.ProfitId] = subItem;
 
                 // Update current_period of detail of sub profit item.
@@ -438,7 +438,7 @@ namespace AElf.Contracts.Profit
                     Amount = input.Amount,
                     Memo = $"Add dividends for {input.ProfitId}."
                 });
-                profitItem.TotalAmount += profitItem.TotalAmount.Add(input.Amount);
+                profitItem.TotalAmount += input.Amount;
                 State.ProfitItemsMap[input.ProfitId] = profitItem;
             }
             else
@@ -458,7 +458,7 @@ namespace AElf.Contracts.Profit
                 {
                     Assert(!releasedProfitsInformation.IsReleased,
                         $"Profit item of period {input.Period} already released.");
-                    releasedProfitsInformation.ProfitsAmount = releasedProfitsInformation.ProfitsAmount.Add(input.Amount);
+                    releasedProfitsInformation.ProfitsAmount += input.Amount;
                 }
 
                 State.TokenContract.TransferFrom.Send(new TransferFromInput

@@ -1,6 +1,5 @@
 using System.Linq;
 using AElf.Contracts.Election;
-using AElf.Sdk.CSharp;
 using Google.Protobuf;
 using Google.Protobuf.WellKnownTypes;
 
@@ -44,9 +43,10 @@ namespace AElf.Contracts.Consensus.AEDPoS
             }
 
             // Update miners list.
-            var miners = new MinerList();
-            miners.PublicKeys.AddRange(input.RealTimeMinersInformation.Keys.Select(k => k.ToByteString()));
-            Assert(SetMinerListOfCurrentTerm(miners), "Failed to update miners list.");
+            var miners = new Miners {TermNumber = input.TermNumber};
+            miners.PublicKeys.AddRange(input.RealTimeMinersInformation.Keys.Select(k =>
+                ByteString.CopyFrom(ByteArrayHelpers.FromHexString(k))));
+            Assert(SetMiners(miners), "Failed to update miners list.");
 
             // Update term number lookup. (Using term number to get first round number of related term.)
             State.FirstRoundNumberOfEachTerm[input.TermNumber] = input.RoundNumber;
@@ -80,14 +80,13 @@ namespace AElf.Contracts.Consensus.AEDPoS
             return new Empty();
         }
 
-        private bool SetMinerListOfCurrentTerm(MinerList minerList, bool gonnaReplaceSomeone = false)
+        private bool SetMiners(Miners miners, bool gonnaReplaceSomeone = false)
         {
             // Miners for one specific term should only update once.
-            var termNumber = State.CurrentTermNumber.Value;
-            var minerListFromState = State.MinerListMap[termNumber];
-            if (gonnaReplaceSomeone || minerListFromState == null)
+            var m = State.MinersMap[miners.TermNumber];
+            if (gonnaReplaceSomeone || m == null)
             {
-                State.MinerListMap[termNumber] = minerList;
+                State.MinersMap[miners.TermNumber] = miners;
                 return true;
             }
 
@@ -105,7 +104,7 @@ namespace AElf.Contracts.Consensus.AEDPoS
                 {
                     if (minerInRound.Value.OutValue == null)
                     {
-                        minerInRound.Value.MissedTimeSlots = minerInRound.Value.MissedTimeSlots.Add(1);
+                        minerInRound.Value.MissedTimeSlots += 1;
                     }
                 }
 

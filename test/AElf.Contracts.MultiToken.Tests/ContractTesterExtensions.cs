@@ -20,7 +20,7 @@ namespace AElf.Contracts.MultiToken
         {
             await starter.ExecuteTokenContractMethodWithMiningAsync(nameof(TokenContract.Transfer), new TransferInput
             {
-                Symbol = "TELF",
+                Symbol = "ELF",
                 Amount = amount,
                 To = to
             });
@@ -41,7 +41,7 @@ namespace AElf.Contracts.MultiToken
                 nameof(TokenContract.GetBalance), new GetBalanceInput
                 {
                     Owner = targetAddress,
-                    Symbol = "TELF"
+                    Symbol = "ELF"
                 }));
             return balanceOutput.Balance;
         }
@@ -61,7 +61,7 @@ namespace AElf.Contracts.MultiToken
                     From = contractTester.GetCallOwnerAddress(),
                     To = lockToAddress,
                     Amount = amount,
-                    Symbol = "TELF",
+                    Symbol = "ELF",
                     LockId = lockId,
                     Usage = "Testing."
                 });
@@ -77,7 +77,7 @@ namespace AElf.Contracts.MultiToken
                     From = contractTester.GetCallOwnerAddress(),
                     To = contractTester.GetConsensusContractAddress(),
                     Amount = amount,
-                    Symbol = "TELF",
+                    Symbol = "ELF",
                     LockId = lockId,
                     Usage = "Testing."
                 });

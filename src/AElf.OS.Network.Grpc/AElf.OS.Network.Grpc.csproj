@@ -20,9 +20,9 @@
     </ItemGroup>
 
     <ItemGroup>
-      <None Include="..\..\protobuf\peer_service.proto">
+      <Content Include="..\..\protobuf\peer_service.proto">
         <Link>Protobuf/peer_service.proto</Link>
-      </None>
+      </Content>
     </ItemGroup>
 
     <ItemGroup>

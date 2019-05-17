@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
 
-namespace AElf.Kernel.Consensus.AEDPoS
+namespace AElf.Blockchains
 {
     // ReSharper disable once InconsistentNaming
     public class ConsensusOptions
@@ -10,7 +10,6 @@ namespace AElf.Kernel.Consensus.AEDPoS
         public List<string> InitialMiners { get; set; }
         public int MiningInterval { get; set; }
         public DateTime StartTimestamp { get; set; } = DateTime.MinValue;
-        public long InitialTermNumber { get; set; }
-        public int TimeEachTerm { get; set; }
+        public int TimeEachTerm { get; set; } = 7;
     }
 }

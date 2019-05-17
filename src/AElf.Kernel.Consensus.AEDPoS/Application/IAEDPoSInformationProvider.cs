@@ -5,6 +5,6 @@ namespace AElf.Kernel.Consensus.AEDPoS.Application
 {
     public interface IAEDPoSInformationProvider
     {
-        Task<IEnumerable<string>> GetCurrentMinerList(ChainContext chainContext);
+        Task<IEnumerable<string>> GetCurrentMiners(ChainContext chainContext);
     }
 }

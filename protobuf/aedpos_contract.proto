@@ -49,7 +49,7 @@ service AEDPoSContract {
         option (aelf.is_view) = true;
     }
     
-    rpc GetCurrentMinerList (google.protobuf.Empty) returns (MinerList) {
+    rpc GetCurrentMiners (google.protobuf.Empty) returns (Miners) {
         option (aelf.is_view) = true;
     }
     rpc GetCurrentMinerListWithRoundNumber (google.protobuf.Empty) returns (MinerListWithRoundNumber) {
@@ -67,9 +67,6 @@ service AEDPoSContract {
     rpc GetPreviousRoundInformation (google.protobuf.Empty) returns (Round) {
         option (aelf.is_view) = true;
     }
-    rpc GetCurrentTermNumber (google.protobuf.Empty) returns (SInt64Value) {
-        option (aelf.is_view) = true;
-    }
 }
 
 // Events
@@ -84,7 +81,8 @@ message InitialAElfConsensusContractInput {
     bool is_side_chain = 3;
     Hash token_contract_system_name = 5;
     Hash vote_contract_system_name = 6;
-    sint64 time_each_term = 7;
+    sint32 time_each_term = 7;
+    sint32 base_time_unit = 8;
 }
 
 // Just used as parameter of consensus contract method.
@@ -104,8 +102,9 @@ message UpdateValueInput {
 }
 
 // The miners public key list for each term.
-message MinerList {
-    repeated bytes PublicKeys = 1;
+message Miners {
+    sint64 TermNumber = 1;
+    repeated bytes PublicKeys = 2;
 }
 
 // To query first round number of each term.
@@ -185,7 +184,7 @@ message TermInfo {
 }
 
 message MinerListWithRoundNumber {
-    MinerList MinerList = 1;
+    Miners MinerList = 1;
     sint64 RoundNumber = 2;
 }
 

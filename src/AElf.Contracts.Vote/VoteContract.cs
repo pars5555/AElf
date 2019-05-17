@@ -121,7 +121,6 @@ namespace AElf.Contracts.Vote
             var currentVotes = votingResult.Results[input.Option];
             votingResult.Results[input.Option] = currentVotes.Add(input.Amount);
             votingResult.VotersCount = votingResult.VotersCount.Add(1);
-            votingResult.VotesAmount = votingResult.VotesAmount.Add(input.Amount);
 
             // Update voted items information.
             var votedItems = State.VotedItemsMap[votingRecord.Voter] ?? new VotedItems();
@@ -207,10 +206,8 @@ namespace AElf.Contracts.Vote
             votingResult.Results[votingRecord.Option] -= votingRecord.Amount;
             if (!votedItems.VotedItemVoteIds[votingRecord.VotingItemId.ToHex()].ActiveVotes.Any())
             {
-                votingResult.VotersCount = votingResult.VotersCount.Sub(1);
+                votingResult.VotersCount -= 1;
             }
-
-            votingResult.VotesAmount = votingResult.VotesAmount.Sub(votingRecord.Amount);
 
             State.VotingResults[votingResultHash] = votingResult;
 
@@ -262,9 +259,7 @@ namespace AElf.Contracts.Vote
             {
                 VotingItemId = input.VotingItemId,
                 SnapshotNumber = nextSnapshotNumber,
-                SnapshotStartTimestamp = Context.CurrentBlockTime.ToTimestamp(),
-                VotersCount = previousVotingResult.VotersCount,
-                VotesAmount = previousVotingResult.VotesAmount
+                SnapshotStartTimestamp = Context.CurrentBlockTime.ToTimestamp()
             };
             return new Empty();
         }
